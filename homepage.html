@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholarship Access Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { min-height: 100vh; background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; color: #fff; }
+    .overlay { position: fixed; inset: 0; background: rgba(5,15,30,0.75); z-index: 0; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1; width: 90%; max-width: 1200px; margin: 60px auto; border-radius: 28px;
+      padding: 40px; background: rgba(255,255,255,0.12); backdrop-filter: blur(22px);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.45); display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;
+    }
+    .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 999px; font-size: 13px; margin-bottom: 20px; }
+    h1 { font-size: 44px; line-height: 1.2; margin-bottom: 20px; }
+    h2 { font-size: 32px; margin-bottom: 16px; }
+    h3 { font-size: 20px; margin-bottom: 12px; }
+    p { font-size: 16px; opacity: 0.9; margin-bottom: 24px; line-height: 1.5; }
+    .buttons { display: flex; gap: 16px; }
+    .btn { padding: 14px 24px; border-radius: 999px; border: none; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .primary { background: #fff; color: #000; }
+    .secondary { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .info-card { background: rgba(255,255,255,0.15); border-radius: 20px; padding: 24px; align-self: center; }
+
+    /* LOGIN */
+    .login { grid-column: span 2; max-width: 380px; background: rgba(255,255,255,0.15); padding: 24px; border-radius: 20px; }
+    .login input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 12px; border: none; }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; text-align: center; margin-top: 20px; }
+    .stat { background: rgba(255,255,255,0.12); border-radius: 18px; padding: 18px; }
+
+    /* CARDS */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; }
+    .card { background: rgba(255,255,255,0.15); padding: 20px; border-radius: 20px; }
+    .locked { filter: blur(6px); pointer-events: none; }
+
+    /* NAVBAR */
+    .navbar { position: relative; z-index: 2; width: 90%; max-width: 1200px; margin: 30px auto 0; padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.12); backdrop-filter: blur(18px); border-radius: 20px; }
+    .logo{ font-weight:700; font-size:18px; }
+    .nav-links { list-style:none; display:flex; gap:20px; }
+    .nav-links a { color:#fff; text-decoration:none; font-size:14px; opacity:.9; }
+    .nav-links a:hover { opacity:1; }
+    .auth-links { display:flex; gap:10px; }
+
+    /* SECTION */
+    .section { grid-column: span 2; margin-top: 40px; }
+    .info-card { background: rgba(255,255,255,0.15); border-radius: 20px; padding: 24px; }
+
+    /* MODAL */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10; }
+    .modal-box { background: #0f172a; padding: 28px; border-radius: 20px; max-width: 360px; width: 90%; text-align: center; }
+
+    /* RESPONSIVE */
+    @media(max-width:1200px){ .stats { grid-template-columns: repeat(3,1fr); } .hero { grid-template-columns: 1fr; gap: 30px; padding: 30px; } }
+    @media(max-width:900px){ .stats { grid-template-columns: repeat(2,1fr); } .cards { grid-template-columns: 1fr; } .hero { grid-template-columns: 1fr; padding: 20px; } .nav-links { display:none; } }
+    @media(max-width:600px){ h1{font-size:32px;} h2{font-size:24px;} h3{font-size:18px;} p{font-size:14px;} .buttons{flex-direction:column; gap:12px;} .auth-links{flex-direction:column; gap:8px;} }
+  </style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<nav class="navbar">
+  <div class="logo">🎓 ScholarLink</div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#packages">Packages</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="auth-links">
+    <button class="btn secondary" onclick="openSignup()">Sign up free</button>
+    <button class="btn primary" onclick="scrollToLogin()">Login</button>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div>
+    <div class="badge">🎓 Over 10,000 Successful Applicants</div>
+    <h1>Global Scholarships & Visa Access<br>Made Simple</h1>
+    <p>Pay once and unlock official, verified application links for global scholarships and visas.</p>
+    <div class="buttons">
+      <button class="btn primary" onclick="scrollToPackages()">View Packages</button>
+      <button class="btn secondary">How It Works</button>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3>Featured Opportunity</h3>
+    <p>Fully Funded Scholarships<br>Bachelor • Master • PhD<br>No IELTS Options</p>
+  </div>
+
+  
+
+  <!-- AVAILABLE SCHOLARSHIPS -->
+  <div class="section">
+    <h2>Available Scholarships</h2><br>
+    <div class="stats">
+      <div class="stat"><h2>150+</h2><span>Total Scholarships</span></div>
+      <div class="stat"><h2>85+</h2><span>Fully Funded</span></div>
+      <div class="stat"><h2>🌍</h2><span>Continents</span><p>Africa • Asia • America • Europe</p></div>
+      <div class="stat"><h2>98%</h2><span>Verified</span></div>
+      <div class="stat"><h2>24/7</h2><span>Access</span></div>
+      <div class="stat"><h2>0</h2><span>Scams</span></div>
+    </div>
+
+    <div class="cards" style="margin-top:20px;">
+      <div class="card locked" id="s1">
+        <h3>🇨🇦 Canada Government Scholarship</h3>
+        <p>Fully Funded • Bachelor / Master</p>
+        <a href="#">Official Application</a>
+      </div>
+      <div class="card locked" id="s2">
+        <h3>🇨🇳 China CSC Scholarship</h3>
+        <p>No IELTS • Bachelor / Master</p>
+        <a href="#">Official Application</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFESSIONAL PACKAGES -->
+  <div class="section" id="packages">
+    <h2>Professional Packages</h2><br>
+    <div class="cards">
+      <div class="card"><h3>500 RWF</h3><p>Basic Access: Unlock some scholarships</p><button class="btn primary" onclick="payPackage(500)">Select</button></div>
+      <div class="card"><h3>1000 RWF</h3><p>Standard Access: Unlock more scholarships</p><button class="btn primary" onclick="payPackage(1000)">Select</button></div>
+      <div class="card"><h3>2000 RWF</h3><p>Advanced Access: Unlock all scholarships</p><button class="btn primary" onclick="payPackage(2000)">Select</button></div>
+      <div class="card"><h3>4000 RWF</h3><p>Premium Access: Includes personalized guidance</p><button class="btn primary" onclick="payPackage(4000)">Select</button></div>
+      <div class="card"><h3>7000 RWF</h3><p>Ultimate Access: Full package + priority support</p><button class="btn primary" onclick="payPackage(7000)">Select</button></div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="section" id="services">
+    <h2>Our Services</h2><br>
+    <div class="cards">
+      <div class="card">
+        <h3>📄 Scholarship Guidance</h3>
+        <p>We provide verified scholarship opportunities worldwide and guide you step-by-step through the application process. Our team helps with eligibility checks, document submission, and tips for writing strong personal statements and motivation letters, ensuring your application stands out and meets all requirements for success.</p>
+      </div>
+      <div class="card">
+        <h3>🌍 Visa Assistance</h3>
+        <p>We offer verified visa application links and guidance for smooth international travel. Our team explains each step, including document submission, requirements, and timelines, helping you avoid mistakes and ensuring a hassle-free, successful visa application for studying abroad.</p>
+      </div>
+      <div class="card">
+        <h3>💡 Career Advice & Application Support</h3>
+        <p>We provide personalized career advice and guidance on using official scholarship application links. From program selection to CV preparation and motivation letters, we help you submit strong applications and align your studies with future career goals effectively and confidently.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section" id="about">
+    <h2>About Us</h2><br>
+    <div class="info-card">
+      <p>🎓 ScholarLink is dedicated to connecting students with verified global scholarships and visa opportunities. Our mission is to simplify the application process, ensure transparency, and help you achieve your dreams abroad. Trusted by thousands of successful applicants worldwide.</p>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section" id="contact">
+    <h2>Contact Us</h2><br>
+    <div class="cards">
+      <div class="card"><h3>📧 Email</h3><p>support@scholarlink.com</p></div>
+      <div class="card"><h3>📞 Phone</h3><p>+1 234 567 890</p></div>
+      <div class="card"><h3>📍 Address</h3><p>123 Scholar St, Knowledge City, World</p></div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  function payPackage(amount){
+    alert('Payment of ' + amount + ' RWF successful (demo)');
+    unlock();
+  }
+
+  function unlock(){
+    document.getElementById('s1').classList.remove('locked');
+    document.getElementById('s2').classList.remove('locked');
+  }
+
+  function scrollToLogin(){
+    document.getElementById('loginBox').scrollIntoView({behavior:'smooth'});
+  }
+
+  function scrollToPackages(){
+    document.getElementById('packages').scrollIntoView({behavior:'smooth'});
+  }
+
+  function openSignup(){
+    alert('Signup page coming next (can be added)');
+  }
+
+  function login(){
+    alert('Login successful (demo)');
+  }
+</script>
+</body>
+</html>
