@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="homepage.css">
+    <style>
+        .register-container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 450px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(22px);
+            padding: 40px;
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+        }
+
+        .register-container h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .register-container p {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .strength-fill.weak {
+            width: 33%;
+            background: #ff6b6b;
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background: #ffd93d;
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background: #6bcf7f;
+        }
+
+        .strength-text {
+            display: block;
+            margin-top: 4px;
+        }
+
+        .strength-text.weak {
+            color: #ff6b6b;
+        }
+
+        .strength-text.medium {
+            color: #ffd93d;
+        }
+
+        .strength-text.strong {
+            color: #6bcf7f;
+        }
+
+        .requirements {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            opacity: 0.7;
+        }
+
+        .requirement:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .requirement-icon.unmet {
+            background: rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+        }
+
+        .requirement-icon.met {
+            background: rgba(107, 207, 127, 0.3);
+            color: #6bcf7f;
+        }
+
+        .password-mismatch {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .password-mismatch.show {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 24px;
+                margin: 20px auto;
+            }
+
+            .register-container h1 {
+                font-size: 24px;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="register-container">
+        <h1>Create Account</h1>
+        <p>Join us today and get started</p>
+        
+        <form id="registrationForm" novalidate>
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input 
+                        type="text" 
+                        id="firstName" 
+                        name="firstName" 
+                        placeholder="John"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        placeholder="Doe"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="you@example.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Create a strong password"
+                    required
+                >
+                
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <span class="strength-text" id="strengthText"></span>
+                </div>
+
+                <div class="requirements">
+                    <div class="requirement">
+                        <div class="requirement-icon unmet" id="lengthIcon">✗</div>
+                        <span>At least 8 characters</span>
+                    </div>
+                    <div class="requirement">
+                        <div class="requirement-icon unmet" id="uppercaseIcon">✗</div>
+                        <span>One uppercase letter (A-Z)</span>
+                    </div>
+                    <div class="requirement">
+                        <div class="requirement-icon unmet" id="lowercaseIcon">✗</div>
+                        <span>One lowercase letter (a-z)</span>
+                    </div>
+                    <div class="requirement">
+                        <div class="requirement-icon unmet" id="digitIcon">✗</div>
+                        <span>One digit (0-9)</span>
+                    </div>
+                    <div class="requirement">
+                        <div class="requirement-icon unmet" id="symbolIcon">✗</div>
+                        <span>One symbol (!@#$%^&*)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Re-enter Password</label>
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    placeholder="Confirm your password"
+                    required
+                >
+                <div class="password-mismatch" id="passwordMismatch">Passwords do not match</div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>Create Account</button>
+
+            <div class="login-link">
+                Already have an account? <a href="#">Sign in</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const submitBtn = document.getElementById('submitBtn');
+        const passwordMismatch = document.getElementById('passwordMismatch');
+        const form = document.getElementById('registrationForm');
+
+        // Password requirements
+        const requirements = {
+            length: { regex: /.{8,}/, icon: 'lengthIcon' },
+            uppercase: { regex: /[A-Z]/, icon: 'uppercaseIcon' },
+            lowercase: { regex: /[a-z]/, icon: 'lowercaseIcon' },
+            digit: { regex: /[0-9]/, icon: 'digitIcon' },
+            symbol: { regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, icon: 'symbolIcon' }
+        };
+
+        function checkPassword() {
+            const password = passwordInput.value;
+            let metCount = 0;
+
+            // Check each requirement
+            for (const [key, requirement] of Object.entries(requirements)) {
+                const isMet = requirement.regex.test(password);
+                const iconElement = document.getElementById(requirement.icon);
+                
+                if (isMet) {
+                    iconElement.classList.remove('unmet');
+                    iconElement.classList.add('met');
+                    iconElement.textContent = '✓';
+                    metCount++;
+                } else {
+                    iconElement.classList.remove('met');
+                    iconElement.classList.add('unmet');
+                    iconElement.textContent = '✗';
+                }
+            }
+
+            // Update strength bar
+            const strength = (metCount / 5) * 100;
+            strengthFill.style.width = strength + '%';
+
+            if (metCount <= 2) {
+                strengthFill.className = 'strength-fill weak';
+                strengthText.className = 'strength-text weak';
+                strengthText.textContent = 'Weak password';
+            } else if (metCount <= 4) {
+                strengthFill.className = 'strength-fill medium';
+                strengthText.className = 'strength-text medium';
+                strengthText.textContent = 'Medium password';
+            } else if (metCount === 5) {
+                strengthFill.className = 'strength-fill strong';
+                strengthText.className = 'strength-text strong';
+                strengthText.textContent = 'Strong password';
+            } else {
+                strengthFill.className = 'strength-fill';
+                strengthText.textContent = '';
+            }
+
+            updateSubmitButton();
+        }
+
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (confirmPassword.length > 0 && password !== confirmPassword) {
+                passwordMismatch.classList.add('show');
+            } else {
+                passwordMismatch.classList.remove('show');
+            }
+
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Check all requirements are met
+            let allRequirementsMet = true;
+            for (const requirement of Object.values(requirements)) {
+                const iconElement = document.getElementById(requirement.icon);
+                if (!iconElement.classList.contains('met')) {
+                    allRequirementsMet = false;
+                    break;
+                }
+            }
+
+            const isFormValid = firstName && lastName && email && password && 
+                               confirmPassword && allRequirementsMet && 
+                               password === confirmPassword && isValidEmail(email);
+
+            submitBtn.disabled = !isFormValid;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Event listeners
+        passwordInput.addEventListener('input', () => {
+            checkPassword();
+            checkPasswordMatch();
+        });
+
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        document.getElementById('firstName').addEventListener('input', updateSubmitButton);
+        document.getElementById('lastName').addEventListener('input', updateSubmitButton);
+        document.getElementById('email').addEventListener('input', updateSubmitButton);
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                password: passwordInput.value
+            };
+
+            console.log('Form submitted:', formData);
+            alert(`Welcome ${formData.firstName}! Your account has been created successfully.`);
+            form.reset();
+            submitBtn.disabled = true;
+            strengthFill.className = 'strength-fill';
+            strengthText.textContent = '';
+            
+            // Reset requirement icons
+            for (const requirement of Object.values(requirements)) {
+                const iconElement = document.getElementById(requirement.icon);
+                iconElement.classList.remove('met');
+                iconElement.classList.add('unmet');
+                iconElement.textContent = '✗';
+            }
+        });
+    </script>
+</body>
+</html>
