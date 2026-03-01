@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Add Scholarship / Visa</title>
+  <!-- reuse some styles from homepage for consistency -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #333; }
+    .container { max-width: 600px; margin: 60px auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    h1 { text-align: center; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; }
+    input[type="text"], input[type="url"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
+    textarea { resize: vertical; height: 100px; }
+    .btn { display: inline-block; padding: 12px 24px; background: #3478E9; color: #fff; border: none; border-radius: 999px; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .status { margin-top: 16px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Entry</h1>
+    <form id="admin-form">
+      <div class="form-group">
+        <label for="type">Type</label>
+        <select id="type" required>
+          <option value="scholarship">Scholarship</option>
+          <option value="visa">Work Visa</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Name / Title</label>
+        <input type="text" id="title" required />
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" />
+      </div>
+
+      <div class="form-group">
+        <label for="details">Details</label>
+        <textarea id="details" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="picture">Picture URL</label>
+        <input type="url" id="picture" placeholder="https://..." />
+      </div>
+
+      <div class="form-group">
+        <label for="link">University / Visa Link</label>
+        <input type="url" id="link" required placeholder="https://example.com" />
+      </div>
+
+      <button type="submit" class="btn">Add Entry</button>
+    </form>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('admin-form');
+    const statusDiv = document.getElementById('status');
+
+    function getAdminSecret() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('secret');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        type: document.getElementById('type').value,
+        title: document.getElementById('title').value,
+        location: document.getElementById('location').value,
+        details: document.getElementById('details').value,
+        pictureUrl: document.getElementById('picture').value,
+        url: document.getElementById('link').value
+      };
+
+      const secret = getAdminSecret();
+      if (!secret) {
+        statusDiv.textContent = 'Missing admin secret in URL query string.';
+        statusDiv.style.color = 'red';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/entries', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-secret': secret
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          statusDiv.textContent = 'Entry added successfully';
+          statusDiv.style.color = 'green';
+          form.reset();
+        } else {
+          statusDiv.textContent = data.message || 'Failed to add entry';
+          statusDiv.style.color = 'red';
+        }
+      } catch (err) {
+        statusDiv.textContent = 'Error: ' + err.message;
+        statusDiv.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

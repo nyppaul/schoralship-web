@@ -1,0 +1,21 @@
+{
+  "name": "schoralship-backend",
+  "version": "1.0.0",
+  "description": "Simple Express + MongoDB backend for schoralship-web",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "mongodb": "^7.1.0",
+    "mongoose": "^7.5.1",
+    "nodemailer": "^8.0.1",
+    "rss": "^1.2.2",
+    "rss-parser": "^3.13.0",
+    "stripe": "^12.18.0"
+  }
+}

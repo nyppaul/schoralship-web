@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Payment Integration Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', Arial; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h1 { color: #22c55e; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
+    input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    input:focus, textarea:focus { outline: none; border-color: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.2); }
+    button { background: #22c55e; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #1e9a4b; }
+    .status { margin-top: 20px; padding: 15px; border-radius: 6px; display: none; }
+    .status.info { background: #e0f2fe; border-left: 4px solid #0284c7; color: #0c4a6e; }
+    .status.success { background: #dcfce7; border-left: 4px solid #22c55e; color: #166534; }
+    .status.error { background: #fee2e2; border-left: 4px solid #dc2626; color: #991b1b; }
+    #card-element { padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; }
+    .step-title { font-weight: 600; color: #0066cc; margin-top: 20px; margin-bottom: 10px; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New'; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 Scholarship Payment Flow</h1>
+    <p>This demonstrates the complete PaymentIntent + Webhook + Email flow</p>
+
+    <div class="form-group">
+      <label for="email">Your Email</label>
+      <input type="email" id="email" placeholder="user@example.com" required>
+    </div>
+
+    <div class="form-group">
+      <label for="scholarship">Scholarship Title</label>
+      <input type="text" id="scholarship" placeholder="e.g., Harvard Scholarship" value="Global Excellence Scholarship">
+    </div>
+
+    <div class="form-group">
+      <label for="scholarshipId">Scholarship ID</label>
+      <input type="text" id="scholarshipId" placeholder="e.g., scholarship-123" value="scholarship-1">
+    </div>
+
+    <div class="step-title">Step 1: Create PaymentIntent</div>
+    <button onclick="createPaymentIntent()">Create Payment Intent</button>
+
+    <div id="paymentIntentStatus" class="status"></div>
+
+    <div class="step-title" id="cardSectionTitle" style="display:none;">Step 2: Enter Card Details</div>
+    <div id="cardSection" style="display: none;">
+      <div id="card-element"></div>
+      <button onclick="processPayment()" style="width: 100%;">Pay $1.50 (1500 RWF)</button>
+    </div>
+
+    <div id="paymentStatus" class="status"></div>
+
+    <div class="step-title">Step 3: Check Payment Status</div>
+    <button onclick="checkPaymentStatus()">Check Status</button>
+
+    <div id="statusResult" class="status"></div>
+
+    <div class="step-title">Step 4: Verify Access Token (after email received)</div>
+    <div class="form-group">
+      <label for="accessToken">Access Token (from email)</label>
+      <input type="text" id="accessToken" placeholder="Enter token from email link">
+    </div>
+    <button onclick="verifyAccessToken()" style="width: 100%;">Verify Access</button>
+
+    <div id="accessResult" class="status"></div>
+
+    <!-- Stripe.js (required for card handling) -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+      let stripe, elements, cardElement;
+      let paymentIntentData = null;
+
+      // Initialize Stripe Elements
+      async function initStripe() {
+        const response = await fetch('/api/payment/create-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'test@example.com' })
+        });
+        
+        const data = await response.json();
+        
+        // For demo, we'll use test publishable key
+        // In production, store this in HTML or get from config endpoint
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T1vhw72to5YiZDRn7zJjGPX77vhYyidmv3XyR6Z8A8hJb6hmBNDgPUkqMYPthpta0C4csBQ44EbhQaFbxenoGjJ0075oPM3re';
+        stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        elements = stripe.elements();
+        cardElement = elements.create('card');
+      }
+
+      // Step 1: Create PaymentIntent
+      async function createPaymentIntent() {
+        const email = document.getElementById('email').value.trim();
+        const scholarship = document.getElementById('scholarship').value.trim();
+        const scholarshipId = document.getElementById('scholarshipId').value.trim();
+
+        if (!email) return showStatus('paymentIntentStatus', 'Please enter email', 'error');
+
+        showStatus('paymentIntentStatus', 'Creating payment intent...', 'info');
+
+        try {
+          const response = await fetch('/api/payment/create-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, scholarshipTitle: scholarship, scholarshipId })
+          });
+
+          if (!response.ok) {
+            const err = await response.json();
+            return showStatus('paymentIntentStatus', 'Error: ' + err.error, 'error');
+          }
+
+          const data = await response.json();
+          paymentIntentData = data;
+
+          // Initialize Stripe if not done
+          if (!stripe) {
+            const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T1vhw72to5YiZDRn7zJjGPX77vhYyidmv3XyR6Z8A8hJb6hmBNDgPUkqMYPthpta0C4csBQ44EbhQaFbxenoGjJ0075oPM3re';
+            stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+            elements = stripe.elements();
+            cardElement = elements.create('card');
+            cardElement.mount('#card-element');
+          }
+
+          showStatus('paymentIntentStatus', `✓ PaymentIntent created: ${data.paymentIntentId}`, 'success');
+          document.getElementById('cardSection').style.display = 'block';
+          document.getElementById('cardSectionTitle').style.display = 'block';
+        } catch (err) {
+          showStatus('paymentIntentStatus', 'Error: ' + err.message, 'error');
+        }
+      }
+
+      // Step 2: Process Payment
+      async function processPayment() {
+        if (!paymentIntentData) return showStatus('paymentStatus', 'Create PaymentIntent first', 'error');
+
+        showStatus('paymentStatus', 'Processing payment...', 'info');
+
+        try {
+          const result = await stripe.confirmCardPayment(paymentIntentData.clientSecret, {
+            payment_method: {
+              card: cardElement,
+              billing_details: {
+                email: document.getElementById('email').value
+              }
+            }
+          });
+
+          if (result.error) {
+            return showStatus('paymentStatus', 'Payment failed: ' + result.error.message, 'error');
+          }
+
+          const paymentIntent = result.paymentIntent;
+          if (paymentIntent.status === 'succeeded') {
+            showStatus('paymentStatus', `✓ Payment successful! Intent: ${paymentIntent.id}. Check your email for the access link.`, 'success');
+            // Webhook will fire and send email
+          } else {
+            showStatus('paymentStatus', `Payment status: ${paymentIntent.status}`, 'info');
+          }
+        } catch (err) {
+          showStatus('paymentStatus', 'Error: ' + err.message, 'error');
+        }
+      }
+
+      // Step 3: Check Payment Status
+      async function checkPaymentStatus() {
+        if (!paymentIntentData) return showStatus('statusResult', 'Create PaymentIntent first', 'error');
+
+        showStatus('statusResult', 'Checking status...', 'info');
+
+        try {
+          const response = await fetch(`/api/payment/status/${paymentIntentData.paymentIntentId}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            return showStatus('statusResult', 'Error: ' + data.error, 'error');
+          }
+
+          const msg = `
+            Status: ${data.status}
+            Email: ${data.email}
+            Scholarship: ${data.scholarshipTitle}
+            Email Sent: ${data.emailSent ? '✓ Yes' : '✗ No'}
+            Access Granted: ${data.accessGranted ? '✓ Yes' : '✗ No'}
+          `;
+          showStatus('statusResult', msg, 'success');
+        } catch (err) {
+          showStatus('statusResult', 'Error: ' + err.message, 'error');
+        }
+      }
+
+      // Step 4: Verify Access Token
+      async function verifyAccessToken() {
+        const token = document.getElementById('accessToken').value.trim();
+        if (!token) return showStatus('accessResult', 'Please enter the access token', 'error');
+
+        showStatus('accessResult', 'Verifying token...', 'info');
+
+        try {
+          const response = await fetch(`/api/payment/access?token=${encodeURIComponent(token)}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            return showStatus('accessResult', 'Error: ' + data.error, 'error');
+          }
+
+          const msg = `
+            ✓ Access Granted!
+            Scholarship: ${data.scholarshipTitle}
+            Link: ${data.scholarshipLink}
+            Expires: ${new Date(data.expiresAt).toLocaleDateString()}
+          `;
+          showStatus('accessResult', msg, 'success');
+        } catch (err) {
+          showStatus('accessResult', 'Error: ' + err.message, 'error');
+        }
+      }
+
+      function showStatus(elementId, message, type) {
+        const el = document.getElementById(elementId);
+        el.textContent = message;
+        el.className = `status ${type}`;
+        el.style.display = 'block';
+      }
+    </script>
+  </div>
+</body>
+</html>

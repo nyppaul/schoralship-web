@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholarship Access Platform</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stripe.js for Payment Processing -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    /* ===== Global Styles ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { min-height: 100vh; background: url('images/fischdoc-seattle-5217635_1920.jpg') center/cover no-repeat; color: #fff; }
+    .overlay { position: fixed; inset: 0; background: rgba(5,15,30,0.75); z-index: 0; }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 1200px;
+      margin: 60px auto;
+      border-radius: 28px;
+      padding: 40px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    li{
+      list-style: none;
+      margin-top: 2%;
+    }
+
+    h1 { font-size: 44px; line-height: 1.2; margin-bottom: 20px; }
+    h2 { font-size: 32px; margin-bottom: 16px; }
+    h3 { font-size: 20px; margin-bottom: 12px; display: inline-block; background: #22c55e; padding: 6px 14px; border-radius: 999px; font-size: 13px; margin-bottom: 20px; }
+    p { font-size: 16px; opacity: 0.9; margin-bottom: 24px; line-height: 1.5; }
+
+    .buttons { display: flex; gap: 16px; }
+    .btn { padding: 14px 24px; border-radius: 999px; border: none; cursor: pointer; font-size: 15px; font-weight: 600; }
+    .primary { background: #fff; color: #000; }
+    .secondary { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .info-card { background: rgba(52, 115, 233, 0.658); border-radius: 20px; padding: 24px; width: 93%; height: 95%; }
+
+    .btn a:hover { background-color: #000; }
+
+    .images {
+      width: 100%;
+      height: auto;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+    }
+
+    @media(max-width:600px){ .images { max-height: 180px; } }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 32px; }
+    .testimonial-card {
+      background: rgba(52,115,233,0.55);
+      border-radius: 20px;
+      padding: 48px 22px 26px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+    .testimonial-card.highlight { background: rgba(52,115,233,0.85); }
+
+    .user-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 4px solid rgba(255,255,255,0.85);
+      background: #fff;
+    }
+
+    .stars { margin-top: 18px; color: #ffd700; font-size: 17px; letter-spacing: 2px; }
+    .quote { font-size: 15px; line-height: 1.6; margin: 16px 0 18px; opacity: 0.95; }
+
+    .user-info strong { display: block; font-size: 15px; }
+    .user-info span { font-size: 13px; opacity: 0.85; }
+
+    @media(max-width:900px){ .testimonials { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:600px){ .testimonials { grid-template-columns: 1fr; } .testimonial-card { padding: 44px 20px 24px; } }
+
+    .btn.primary:hover { background: #22c55e; color: #fff; transition: 0.3s ease; }
+    .btn i { margin-right: 8px; font-size: 14px; }
+
+/* ===== PACKAGE CARDS ===== */
+.section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 60px auto;
+  color: #fff;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(18px);
+  padding: 24px;
+  border-radius: 20px;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.6);
+  background: rgba(255,255,255,0.1);
+}
+
+.card.popular {
+  background: rgba(255,215,0,0.9);
+  color: #000;
+}
+
+.card.popular::before {
+  content: "POPULAR";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #000;
+  color: #ffd700;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+.package-features {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 20px;
+}
+
+.package-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  opacity: 0.95;
+}
+
+.package-features i {
+  color: #22c55e;
+  font-size: 16px;
+}
+
+
+    /* ===== STATS & CARDS ===== */
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; text-align: left; margin-top: 20px; }
+    .stat { background: rgba(52, 115, 233, 0.658); border-radius: 18px; padding: 18px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; }
+    .card { background: rgba(50, 90, 165, 0.603); padding: 20px; border-radius: 20px; }
+    .locked { filter: blur(6px); pointer-events: none; }
+
+    #hero { background-color: darkblue; color: white; padding: 40px; text-align: center; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: relative; z-index: 2; width: 90%; max-width: 1200px;
+      margin: 30px auto 0; padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.12); backdrop-filter: blur(18px); border-radius: 20px;
+    }
+    .logo { font-weight: 700; font-size: 18px; }
+    .nav-links { list-style: none; display: flex; gap: 20px; }
+    .nav-links a { color: #fff; text-decoration: none; font-size: 14px; opacity: 0.9; }
+    .nav-links a:hover { opacity: 1; }
+    .auth-links { display: flex; gap: 10px; }
+
+    /* ===== SECTION ===== */
+    .section { width: 90%; max-width: 1200px; margin: 60px auto; color: #fff; opacity: 0.9; }
+
+    /* ===== FOOTER ===== */
+  .footer{
+  width:90%; max-width:1200px; margin:60px auto; padding:40px 20px;
+  color:#fff; border-radius:10px; background:rgba(58,122,219,0.85); font-family:'Inter',sans-serif;
+}
+.footer-content{
+  display:flex; gap:20px; flex-wrap:wrap;
+}
+.footer-contact, .footer-message{
+  flex:1 1 300px; background:rgba(255,255,255,0.1); padding:20px 24px; border-radius:20px; backdrop-filter:blur(16px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.3);
+}
+.footer-contact .contact-row{display:flex; align-items:center; gap:10px; margin-bottom:12px; white-space:nowrap;}
+.footer-contact i{color:#34b3eb; font-size:20px;}
+.footer-contact .footer-info{font-size:14px; opacity:0.9; margin-top:12px;}
+.footer-message h4{margin-bottom:10px;}
+.footer-message input, .footer-message textarea{
+  width:100%; padding:10px 14px; border-radius:12px; border:none; font-size:14px; outline:none; margin-bottom:10px;
+}
+.footer-message .btn{width:max-content; padding:10px 24px; font-size:14px;}
+/* ===== FLOATING WHATSAPP BUTTON ===== */
+.floating-whatsapp-btn{
+  position:fixed; bottom:20px; right:20px; background-color:#046427; color:#fff; padding:12px 20px; border-radius:50px;
+  font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px; text-decoration:none; box-shadow:0 0 10px #25D366,0 0 20px #25D366,0 0 30px #25D366; z-index:9999; transition:background 0.3s, transform 0.2s, box-shadow 0.3s; animation:glow 2s infinite alternate;
+}
+.floating-whatsapp-btn i{font-size:18px;}
+.floating-whatsapp-btn:hover{background-color:#128C3E; transform:translateY(-2px); box-shadow:0 0 15px #128C3E,0 0 25px #128C3E,0 0 35px #128C3E;}
+@keyframes glow{0%{box-shadow:0 0 5px #25D366,0 0 10px #25D366,0 0 15px #25D366;}50%{box-shadow:0 0 10px #25D366,0 0 20px #25D366,0 0 30px #25D366;}100%{box-shadow:0 0 5px #25D366,0 0 10px #25D366,0 0 15px #25D366;}}
+ 
+
+    /* ===== MEDIA QUERIES ===== */
+    @media(min-width:900px){ .footer-content { flex-direction: row; gap: 20px; } .footer-contact-map { flex-direction: row; gap: 20px; } .footer-contact, .footer-map, .footer-message { flex: 1; } }
+    @media(max-width:600px){ .footer-contact { font-size: 14px; } .footer-info { font-size: 13px; } .footer-message .message-input, .footer-message .message-text { font-size: 13px; } .footer-message .btn { font-size: 13px; } }
+    @media(max-width:1200px){ .stats { grid-template-columns: repeat(3,1fr); } .hero { grid-template-columns: 1fr; gap: 30px; padding: 30px; } }
+    @media(max-width:900px){ .stats { grid-template-columns: repeat(2,1fr); } .cards { grid-template-columns: 1fr; } .hero { grid-template-columns: 1fr; padding: 20px; } .nav-links { display:none; } }
+    @media(max-width:600px){ h1{font-size:32px;} h2{font-size:24px;} h3{font-size:18px;} p{font-size:14px;} .buttons{flex-direction:column; gap:12px;} .auth-links{flex-direction:column; gap:8px;} }
+
+    /* ===== PAYMENT MODAL ===== */
+    .payment-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; }
+    .payment-modal.active { display: flex; }
+    .payment-modal-content { background: #fff; border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .payment-modal-content h2 { margin-bottom: 20px; color: #333; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+    #card-element { border: 1px solid #ddd; padding: 12px; border-radius: 8px; }
+    .payment-modal-content .btn { width: 100%; margin-top: 20px; }
+    .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 28px; cursor: pointer; color: #333; }
+    .payment-status { text-align: center; padding: 20px; }
+    .payment-status.success { color: #22c55e; }
+    .payment-status.error { color: #ef4444; }
+    .payment-status.loading { color: #3478E9; }
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="logo">🎓 ScholarLink</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#scholarships">Scholarships</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" id="home">
+    <div>
+      <div class="badge"><i class="fa-solid fa-graduation-cap"></i> Over 10,000 Successful Applicants</div>
+      <h1>Global Scholarships & Work Visa Access<br>Application Link</h1>
+      <p>Only use verified global scholarship & visa links. Don’t trust fake “applying” promises! we have a verified application links for global scholarships and visas.</p>
+      <div class="buttons">
+        <button class="btn primary" onclick="scrollToScholarships()"><i class="fa-solid fa-graduation-cap"></i>View Scholarships</button>
+      
+      </div>
+    </div>
+    <div class="info-card">
+      <img class="images" src="images/international-flags.jpg" alt="">
+      <h3 style="margin-top: 2%;">Featured Opportunity arround</h3>
+      <ul class="scholarship-info">
+        <li><i class="fa-solid fa-circle-check"></i> No application fee – get your verified link</li>
+        <li><i class="fa-solid fa-graduation-cap"></i> Scholarships: Bachelor • Master • PhD</li>
+        <li><i class="fa-solid fa-globe"></i> Work Visa Job Opportunity</li>
+      </ul>
+    </div>
+  </section>
+
+<!-- AVAILABLE SCHOLARSHIPS -->
+<section class="section" id="scholarships">
+  <h1>Available Scholarships</h1>
+  <div id="scholarships-container" class="stats">
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+      <p style="color: rgba(255,255,255,0.7); font-size: 18px;">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading scholarships...
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- AVAILABLE Job Application -->
+<section class="section" id="opportunities">
+  <h1>Available Work Visa Opportunity</h1>
+  <div id="opportunities-container" class="stats">
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+      <p style="color: rgba(255,255,255,0.7); font-size: 18px;">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading opportunities...
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- SERVICES -->
+
+<section class="section" id="services">
+  <h2>Our Services</h2>
+  <div class="cards">
+    <div class="card">
+
+      <h3><i class="fa-solid fa-graduation-cap service-icon"></i></i> Scholarship Links.</h3>
+      <p>We provide verified scholarship links worldwide and guide you step-by-step through the application process.</p>
+    </div>
+    <div class="card">
+      
+      <h3><i class="fa-solid fa-passport service-icon"></i> Visa Work Application Links</h3>
+      <p>We offer verified visa job opportunity application links and guidance for smooth international travel.</p>
+    </div>
+    <div class="card">
+   
+      <h3>  <i class="fa-solid fa-lightbulb service-icon"></i> Career Advice & Application Support</h3>
+      <p>We provide personalized career advice and guidance for submitting strong applications aligned with your goals.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" id="testimonials">
+  <h2>Testmonials</h2>
+  <div class="testimonials">
+
+    <div class="testimonial-card">
+      <img src="images/32bd4b537a57ef27ed4fe836112b7821.jpg" class="user-img">
+      <div class="stars">★★★★★</div>
+      <p class="quote">“I got a fully funded scholarship thanks to ScholarLink.”</p>
+      <div class="user-info"><strong>Ange M.</strong><span>Scholarship Winner</span></div>
+    </div>
+
+    <div class="testimonial-card highlight">
+      <img src="images/32bd4b537a57ef27ed4fe836112b7821.jpg" class="user-img">
+      <div class="stars">★★★★★</div>
+      <p class="quote">“Real links, real results. Highly recommended.”</p>
+      <div class="user-info"><strong>Jean P.</strong><span>International Student</span></div>
+    </div>
+
+    <div class="testimonial-card">
+      <img src="images/32bd4b537a57ef27ed4fe836112b7821.jpg" class="user-img">
+      <div class="stars">★★★★☆</div>
+      <p class="quote">“Affordable and very helpful platform.”</p>
+      <div class="user-info"><strong>Marie K.</strong><span>Job Applicant</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+
+<!-- FOOTER -->
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+
+  <h2 style="margin-left: 10%; color: #fff; opacity: 0.9;">Contacts</h2>
+  <div class="footer-content">
+
+    <!-- CONTACT + MAP -->
+    <div class="footer-contact">
+  <div class="contact-row">
+    <i class="fa-solid fa-envelope"></i>
+    <span>support@scholarlink.com</span>
+  </div>
+  <div class="contact-row">
+    <i class="fa-solid fa-phone"></i>
+    <span>+1 234 567 890</span>
+  </div>
+  <div class="contact-row">
+    <i class="fa-solid fa-location-dot"></i>
+    <span>123 Scholar St, Knowledge City</span>
+  </div>
+  <div class="footer-info">
+    Designed with <span style="color:#ff4d6d;">❤️</span> by Nyg
+  </div>
+</div>
+
+
+    
+
+    <!-- SEND MESSAGE BOX -->
+    <div class="footer-message">
+      <h4>Send us a message</h4>
+      <input type="email" placeholder="Your email" class="message-input">
+      <textarea placeholder="Your message" class="message-text"></textarea>
+      <button class="btn primary" onclick="alert('Message sent!')">Send</button>
+    </div>
+
+  </div>
+ 
+
+</footer>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" class="floating-whatsapp-btn">
+  <i class="fab fa-whatsapp"></i> Join WhatsApp Group
+</a>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="payment-modal">
+  <div class="payment-modal-content" style="position: relative;">
+    <button class="close-modal" onclick="closePaymentModal()">✕</button>
+    
+    <h2>Get Scholarship Access</h2>
+    <div style="background: #f0f4f8; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+      <p style="color: #666; margin-bottom: 8px; font-size: 14px;">Scholarship:</p>
+      <h3 style="background: none; padding: 0; margin: 0; color: #333; font-size: 18px;" id="scholarship-title-display"></h3>
+      <p style="color: #3478E9; font-weight: 600; margin-top: 10px;" id="amount-display"></p>
+    </div>
+
+    <form id="payment-form">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email-input" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label>Card Details</label>
+        <div id="card-element"></div>
+      </div>
+
+      <div id="payment-status" class="payment-status"></div>
+
+      <button type="submit" class="btn primary" style="width: 100%; background: #3478E9; color: white; border: none;">
+        <i class="fa-solid fa-lock"></i> Pay Now
+      </button>
+      <p style="font-size: 12px; color: #999; text-align: center; margin-top: 10px;">
+        Secure payment powered by Stripe
+      </p>
+    </form>
+
+    <input type="hidden" id="scholarship-title-input">
+    <input type="hidden" id="scholarship-amount">
+  </div>
+</div>
+
+
+
+
+<script>
+  // Initialize Stripe
+  const stripe = Stripe('pk_test_51T1vhw72to5YiZDRn7zJjGPX77vhYyidmv3XyR6Z8A8hJb6hmBNDgPUkqMYPthpta0C4csBQ44EbhQaFbxenoGjJ0075oPM3re');
+  let elements;
+  let cardElement;
+
+  // Load scholarships on page load
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadScholarships();
+  });
+
+  // Fetch and display scholarships from API
+  async function loadScholarships() {
+    try {
+     const response = await fetch('/api/scholarships');
+      if (!response.ok) throw new Error('Failed to fetch scholarships');
+    
+      const result = await response.json();
+      const allEntries = result.data || [];
+      console.log(`Loaded ${allEntries.length} entries`);
+
+      // separate into scholarships and visa opportunities
+      const scholarshipList = allEntries.filter(e => !e.type || e.type === 'scholarship');
+      const visaList = allEntries.filter(e => e.type === 'visa');
+
+      // Display scholarships
+      const container = document.getElementById('scholarships-container');
+      if (scholarshipList.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+            <p style="color: rgba(255,255,255,0.7); font-size: 18px;">No scholarships available at this time.</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = scholarshipList.slice(0, 6).map(scholarship => `
+        <div class="stat">
+          <h2>${scholarship.title}${scholarship.location ? ' - ' + scholarship.location : ''}</h2>
+          <img class="images" src="${scholarship.pictureUrl || 'images/32bd4b537a57ef27ed4fe836112b7821.jpg'}" alt="${scholarship.title}">
+          <p>${scholarship.description || scholarship.details || 'Access verified scholarship application links and guidance for successful applications.'}</p>
+          ${scholarship.link ? `<p style="font-size:13px;"><a href="${scholarship.link}" target="_blank" style="color:#fff; text-decoration:underline;">Source</a></p>` : ''}
+          <p style="font-size: 14px; opacity: 0.8;">
+            ${scholarship.awards > 0 ? `<i class="fa-solid fa-trophy"></i> ${scholarship.awards} Award${scholarship.awards > 1 ? 's' : ''}` : 'Multiple Awards'} • 
+            ${scholarship.deadline ? new Date(scholarship.deadline).toLocaleDateString() : 'No deadline'}
+          </p>
+          <h3>Price 1500 RWF</h3>
+          <button class="btn primary" onclick="initiatePayment('${scholarship.title.replace(/'/g, "\\'")}', 1500, '${scholarship.link || ''}')">
+            <i class="fa-solid fa-link"></i> Get link here
+          </button>
+        </div>
+      `).join('');
+      }
+
+      // Work visa opportunities
+      const opportunitiesContainer = document.getElementById('opportunities-container');
+      if (visaList.length > 0) {
+        opportunitiesContainer.innerHTML = visaList.slice(0, 6).map(scholarship => `
+          <div class="stat">
+            <h2>${scholarship.title}${scholarship.location ? ' - ' + scholarship.location : ''}</h2>
+            <img class="images" src="${scholarship.pictureUrl || 'images/fischdoc-seattle-5217635_1920.jpg'}" alt="${scholarship.title}">
+            <p>${scholarship.description || scholarship.details || 'Access verified scholarship application links and guidance for successful applications.'}</p>
+            ${scholarship.link ? `<p style="font-size:13px;"><a href="${scholarship.link}" target="_blank" style="color:#fff; text-decoration:underline;">Source</a></p>` : ''}
+            <p style="font-size: 14px; opacity: 0.8;">
+              ${scholarship.awards > 0 ? `<i class="fa-solid fa-trophy"></i> ${scholarship.awards} Award${scholarship.awards > 1 ? 's' : ''}` : 'Multiple Awards'} • 
+              ${scholarship.deadline ? new Date(scholarship.deadline).toLocaleDateString() : 'No deadline'}
+            </p>
+            <h3>Price 1500 RWF</h3>
+            <button class="btn primary" onclick="initiatePayment('${scholarship.title.replace(/'/g, "\\'")}', 1500)">
+              <i class="fa-solid fa-link"></i> Get link here
+            </button>
+          </div>
+        `).join('');
+      } else {
+        opportunitiesContainer.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+            <p style="color: rgba(255,255,255,0.7); font-size: 18px;">More opportunities coming soon!</p>
+          </div>
+        `;
+      }
+    } catch (err) {
+      console.error('Error loading scholarships:', err);
+      const container = document.getElementById('scholarships-container');
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+          <p style="color: #ef4444; font-size: 18px;">
+            <i class="fa-solid fa-exclamation-circle"></i> Failed to load scholarships. Please refresh the page.
+          </p>
+        </div>
+      `;
+    }
+  }
+
+  // Initialize payment module
+  function initPaymentForm() {
+    if (!elements) {
+      elements = stripe.elements();
+      cardElement = elements.create('card');
+    }
+  }
+
+  // Open payment modal with scholarship info
+  function initiatePayment(scholarshipTitle, amount) {
+    initPaymentForm();
+    
+    document.getElementById('payment-modal').classList.add('active');
+    document.getElementById('scholarship-title-display').textContent = scholarshipTitle;
+    document.getElementById('amount-display').textContent = 'RWF ' + amount;
+    document.getElementById('scholarship-title-input').value = scholarshipTitle;
+    document.getElementById('scholarship-amount').value = amount;
+    // Set hidden URL field if available
+    if (scholarshipUrl) {
+      let urlInput = document.getElementById('scholarship-url-input');
+      if (!urlInput) {
+        urlInput = document.createElement('input');
+        urlInput.type = 'hidden';
+        urlInput.id = 'scholarship-url-input';
+        document.getElementById('payment-form').appendChild(urlInput);
+      }
+      urlInput.value = scholarshipUrl;
+    }
+    
+    // Mount card element if not already mounted
+    const cardContainer = document.getElementById('card-element');
+    if (cardContainer.children.length === 0) {
+      cardElement.mount('#card-element');
+    }
+  }
+
+  // Close payment modal
+  function closePaymentModal() {
+    document.getElementById('payment-modal').classList.remove('active');
+    clearPaymentForm();
+  }
+
+  // Clear payment form
+  function clearPaymentForm() {
+    document.getElementById('payment-form').reset();
+    const statusDiv = document.getElementById('payment-status');
+    statusDiv.textContent = '';
+    statusDiv.className = 'payment-status';
+  }
+
+  // Handle payment submission
+  document.getElementById('payment-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email-input').value;
+    const scholarshipTitle = document.getElementById('scholarship-title-input').value;
+    const amount = parseInt(document.getElementById('scholarship-amount').value);
+    const scholarshipUrl = document.getElementById('scholarship-url-input')?.value || '';
+    const statusDiv = document.getElementById('payment-status');
+
+    if (!email || !scholarshipTitle) {
+      statusDiv.textContent = 'Please fill in all fields';
+      statusDiv.className = 'payment-status error';
+      return;
+    }
+
+    statusDiv.textContent = 'Creating payment intent...';
+    statusDiv.className = 'payment-status loading';
+
+    try {
+      // Step 1: Create PaymentIntent on backend
+      const intentResponse = await fetch('/api/payment/create-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          scholarshipTitle,
+          scholarshipId: scholarshipTitle.toLowerCase().replace(/\s+/g, '-'),
+          scholarshipUrl
+        })
+      });
+
+      if (!intentResponse.ok) throw new Error('Failed to create payment intent');
+      const { clientSecret, paymentIntentId } = await intentResponse.json();
+
+      statusDiv.textContent = 'Processing payment...';
+      statusDiv.className = 'payment-status loading';
+
+      // Step 2: Confirm payment with Stripe
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { email }
+        }
+      });
+
+      if (error) {
+        statusDiv.textContent = `Payment failed: ${error.message}`;
+        statusDiv.className = 'payment-status error';
+      } else if (paymentIntent.status === 'succeeded') {
+        statusDiv.innerHTML = `
+          <div style="color: #22c55e; font-weight: 600; margin-bottom: 10px;">
+            ✓ Payment Successful!
+          </div>
+          <p style="font-size: 14px; margin: 10px 0;">
+            Check your email for the scholarship link.
+          </p>
+          <p style="font-size: 12px; opacity: 0.8; margin: 10px 0;">
+            The link will be sent to: <strong>${email}</strong>
+          </p>
+        `;
+        statusDiv.className = 'payment-status success';
+        
+        // Close modal after 3 seconds
+        setTimeout(() => {
+          closePaymentModal();
+        }, 3000);
+      } else {
+        statusDiv.textContent = `Payment status: ${paymentIntent.status}`;
+        statusDiv.className = 'payment-status loading';
+      }
+    } catch (err) {
+      statusDiv.textContent = `Error: ${err.message}`;
+      statusDiv.className = 'payment-status error';
+    }
+  });
+
+  // Scroll helper
+  function scrollToScholarships() {
+    const el = document.getElementById('scholarships');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+
+
+</html>
