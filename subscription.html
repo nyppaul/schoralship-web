@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholarship Access Platform</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; font-family: 'Inter', sans-serif; }
+    body { min-height: 100vh; background: url('images/fischdoc-seattle-5217635_1920.jpg') center/cover no-repeat; color: #fff; }
+    .overlay { position: fixed; inset:0; background: rgba(5,15,30,0.75); z-index:0; }
+
+    /* ===== NAVBAR ===== */
+    .navbar { position: relative; z-index:2; width:90%; max-width:1200px; margin:30px auto 0; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.12); backdrop-filter: blur(18px); border-radius: 20px; }
+    .logo { font-weight:700; font-size:18px; }
+    .nav-links { list-style:none; display:flex; gap:20px; }
+    .nav-links a { color:#fff; text-decoration:none; font-size:14px; opacity:0.9; }
+    .nav-links a:hover { opacity:1; }
+    .auth-links { display:flex; gap:10px; }
+
+    /* ===== HERO ===== */
+    .hero { position: relative; z-index:1; width:90%; max-width:1200px; margin:60px auto; border-radius:28px; padding:40px; background: rgba(255,255,255,0.12); backdrop-filter: blur(22px); box-shadow:0 25px 60px rgba(0,0,0,0.45); display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; }
+    h1 { font-size:44px; line-height:1.2; margin-bottom:20px; }
+    p { font-size:16px; opacity:0.9; margin-bottom:24px; line-height:1.5; }
+    .badge { display:inline-block; background: rgba(255,255,255,0.2); padding:6px 14px; border-radius:999px; font-size:13px; margin-bottom:20px; }
+
+    .buttons { display:flex; gap:16px; }
+    .btn { padding:14px 24px; border-radius:999px; border:none; cursor:pointer; font-size:15px; font-weight:600; }
+    .primary { background: #fff; color:#000; }
+    .secondary { background: rgba(255,255,255,0.2); color:#fff; }
+    .btn a:hover { background-color:#000; }
+
+    .info-card { background: rgba(52,115,233,0.658); border-radius:20px; padding:24px; width:93%; height:95%; }
+    .images { width:100%; max-height:220px; object-fit:cover; border-radius:10px; display:block; }
+    
+    /* ===== PACKAGE SECTION ===== */
+    .section { width:90%; max-width:1200px; margin:60px auto; color:#fff; opacity:0.95; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+    .card { background: rgba(52,115,233,0.658); padding:20px; border-radius:20px; position:relative; }
+    .card.popular::before { content:"POPULAR"; position:absolute; top:10px; right:10px; background:#ffd700; color:#000; padding:4px 10px; font-size:12px; font-weight:700; border-radius:12px; }
+
+    .package-features { list-style:none; padding:0; margin:16px 0 20px; }
+    .package-features li { display:flex; align-items:center; gap:10px; font-size:14px; line-height:1.5; margin-bottom:10px; opacity:0.95; }
+    .package-features i { color:#22c55e; font-size:16px; flex-shrink:0; }
+
+    .toggle-container { display:flex; justify-content:center; gap:10px; margin-bottom:40px; }
+    .toggle-btn { padding:12px 24px; border-radius:999px; border:none; cursor:pointer; font-weight:600; font-size:14px; background: rgba(255,255,255,0.2); color:#fff; transition:0.3s; }
+    .toggle-btn.active { background:#fff; color:#000; }
+
+   /* ===== FOOTER ===== */
+.footer{
+  width:90%; max-width:1200px; margin:60px auto; padding:40px 20px;
+  color:#fff; border-radius:10px; background:rgba(58,122,219,0.85); font-family:'Inter',sans-serif;
+}
+.footer-content{
+  display:flex; gap:20px; flex-wrap:wrap;
+}
+.footer-contact, .footer-message{
+  flex:1 1 300px; background:rgba(255,255,255,0.1); padding:20px 24px; border-radius:20px; backdrop-filter:blur(16px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.3);
+}
+.footer-contact .contact-row{display:flex; align-items:center; gap:10px; margin-bottom:12px; white-space:nowrap;}
+.footer-contact i{color:#34b3eb; font-size:20px;}
+.footer-contact .footer-info{font-size:14px; opacity:0.9; margin-top:12px;}
+.footer-message h4{margin-bottom:10px;}
+.footer-message input, .footer-message textarea{
+  width:100%; padding:10px 14px; border-radius:12px; border:none; font-size:14px; outline:none; margin-bottom:10px;
+}
+.footer-message .btn{width:max-content; padding:10px 24px; font-size:14px;}
+
+/* ===== FLOATING WHATSAPP BUTTON ===== */
+.floating-whatsapp-btn{
+  position:fixed; bottom:20px; right:20px; background-color:#046427; color:#fff; padding:12px 20px; border-radius:50px;
+  font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px; text-decoration:none; box-shadow:0 0 10px #25D366,0 0 20px #25D366,0 0 30px #25D366; z-index:9999; transition:background 0.3s, transform 0.2s, box-shadow 0.3s; animation:glow 2s infinite alternate;
+}
+.floating-whatsapp-btn i{font-size:18px;}
+.floating-whatsapp-btn:hover{background-color:#128C3E; transform:translateY(-2px); box-shadow:0 0 15px #128C3E,0 0 25px #128C3E,0 0 35px #128C3E;}
+@keyframes glow{0%{box-shadow:0 0 5px #25D366,0 0 10px #25D366,0 0 15px #25D366;}50%{box-shadow:0 0 10px #25D366,0 0 20px #25D366,0 0 30px #25D366;}100%{box-shadow:0 0 5px #25D366,0 0 10px #25D366,0 0 15px #25D366;}}
+
+
+
+    /* ===== MEDIA QUERIES ===== */
+@media(max-width:900px){ .navbar{flex-direction:column; align-items:flex-start;} .nav-links{flex-direction:column; gap:12px; width:100%; margin-top:10px;} .auth-links{flex-direction:column; gap:10px; width:100%; margin-top:10px;} .footer-content{flex-direction:column; gap:20px;} }
+
+    @media(max-width:900px){ .hero{grid-template-columns:1fr; gap:30px; padding:30px;} .cards{grid-template-columns:1fr;} .nav-links{display:none;} }
+    @media(max-width:600px){ h1{font-size:32px;} p{font-size:14px;} .buttons{flex-direction:column; gap:12px;} }
+
+  </style>
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">🎓 ScholarLink</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#packages">Packages</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="auth-links">
+      <button class="btn secondary" onclick="openSignup()">Sign up free</button>
+      <button class="btn primary" onclick="scrollToLogin()">Login</button>
+    </div>
+  </nav>
+
+  
+
+  <!-- PACKAGE TOGGLE -->
+  <section class="section" id="packages">
+    <h2>Professional Packages</h2>
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="monthlyBtn">Monthly</button>
+      <button class="toggle-btn" id="onetimeBtn">One-time</button>
+    </div>
+
+    <div class="cards" id="packageCards">
+      <!-- Monthly default -->
+      <div class="card" id="monthlyCard">
+        <h3>7,000 RWF / Month – Ultimate Access</h3>
+        <ul class="package-features">
+          <li><i class="fa-solid fa-circle-check"></i> 6 Scholarship links</li>
+          <li><i class="fa-solid fa-circle-check"></i> 5 Job application links</li>
+          <li><i class="fa-solid fa-circle-check"></i> Bachelor • Master • PhD</li>
+          <li><i class="fa-solid fa-circle-check"></i> Africa • Asia • Europe • America</li>
+          <li><i class="fa-solid fa-circle-check"></i> Full funded scholarships</li>
+        </ul>
+        <p>Full access to all listed scholarship & job links worldwide valid for one month.</p>
+        <div style="display:flex; gap:10px;">
+          <button class="btn primary" onclick="payPackage('7000','monthly','MTN')">Pay </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <h2 style="margin-left:10%; color:#fff; opacity:0.9;">Contacts</h2>
+    <div class="footer-content">
+      <div class="footer-contact">
+        <div class="contact-row"><i class="fa-solid fa-envelope"></i><span>support@scholarlink.com</span></div>
+        <div class="contact-row"><i class="fa-solid fa-phone"></i><span>+1 234 567 890</span></div>
+        <div class="contact-row"><i class="fa-solid fa-location-dot"></i><span>123 Scholar St, Knowledge City</span></div>
+        <div class="footer-info">Designed with <span style="color:#ff4d6d;">❤️</span> by Nyg</div>
+      </div>
+
+      <div class="footer-message">
+        <h4>Send us a message</h4>
+        <input type="email" placeholder="Your email" class="message-input">
+        <textarea placeholder="Your message" class="message-text"></textarea>
+        <button class="btn primary" onclick="alert('Message sent!')">Send</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Button -->
+<a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" class="floating-whatsapp-btn">
+  <i class="fab fa-whatsapp"></i> Join WhatsApp Group
+</a>
+
+<script>
+const monthlyBtn = document.getElementById('monthlyBtn');
+const onetimeBtn = document.getElementById('onetimeBtn');
+const packageCards = document.getElementById('packageCards');
+
+monthlyBtn.addEventListener('click',()=>{
+  monthlyBtn.classList.add('active');
+  onetimeBtn.classList.remove('active');
+  packageCards.innerHTML = `
+    <div class="card" id="monthlyCard">
+      <h3>7,000 RWF / Month – Ultimate Access</h3>
+      <ul class="package-features">
+        <li><i class="fa-solid fa-circle-check"></i> 6 Scholarship links</li>
+        <li><i class="fa-solid fa-circle-check"></i> 5 Job application links</li>
+        <li><i class="fa-solid fa-circle-check"></i> Bachelor • Master • PhD</li>
+        <li><i class="fa-solid fa-circle-check"></i> Africa • Asia • Europe • America</li>
+        <li><i class="fa-solid fa-circle-check"></i> Full funded scholarships</li>
+      </ul>
+      <p>Full access to all listed scholarship & job links worldwide valid for one month.</p>
+      <div style="display:flex; gap:10px;">
+        <button class="btn primary" onclick="payPackage('7000','monthly','MTN')">Pay </button>
+   
+      </div>
+    </div>
+  `;
+});
+
+onetimeBtn.addEventListener('click',()=>{
+  monthlyBtn.classList.remove('active');
+  onetimeBtn.classList.add('active');
+  packageCards.innerHTML = `
+    <div class="card"><h3>1,000 RWF – Basic Access</h3><ul class="package-features">
+      <li><i class="fa-solid fa-circle-check"></i> 1 Scholarship link</li>
+      <li><i class="fa-solid fa-circle-check"></i> 1 Job link</li>
+    </ul><p>Get a single scholarship & job link, pay once.</p><button class="btn primary" onclick="location.href='payment.html'">Pay </button></div>
+    <div class="card popular"><h3>2,000 RWF – Standard Access</h3><ul class="package-features">
+      <li><i class="fa-solid fa-circle-check"></i> 3 Scholarship links</li>
+      <li><i class="fa-solid fa-circle-check"></i> 3 Job links</li>
+    </ul><p>Unlock 6 official scholarship & job links. ⭐ Popular choice</p><button class="btn primary" onclick="location.href='payment.html'">Pay </button></div>
+    <div class="card"><h3>4,000 RWF – Full Access</h3><ul class="package-features">
+      <li><i class="fa-solid fa-circle-check"></i> 5 Scholarship links</li>
+      <li><i class="fa-solid fa-circle-check"></i> 3 Job links</li>
+    </ul><p>All remaining links included. Pay once.</p><button class="btn primary" onclick="location.href='payment.html'">Pay</button></div>
+  `;
+});
+
+function payPackage(amount,type,provider){
+  alert(`Payment of ${amount} RWF (${type} package) via ${provider} successful (demo)`);
+}
+function scrollToPackages(){document.getElementById('packages').scrollIntoView({behavior:'smooth'});}
+function openSignup(){alert('Signup page coming next');}
+function scrollToLogin(){alert('Login section coming soon');}
+</script>
+</body>
+</html>
